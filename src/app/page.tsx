@@ -1,6 +1,8 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 
-const CalculadoraViabilidade = () => {
+export default function CalculadoraViabilidade() {
   // Estados para o logo e título personalizáveis
   const [logo, setLogo] = useState(null);
   const [titulo, setTitulo] = useState('Calculadora de Viabilidade de Investimento Imobiliário');
@@ -733,3 +735,188 @@ const CalculadoraViabilidade = () => {
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.otimo.resultadoLiquido)}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.perfeito.resultadoLiquido)}</td>
                   </tr>
+                </tbody>
+              </table>
+              
+              <h2 className="text-lg font-bold text-white bg-gray-700 p-2 mb-4">Indicadores de Desempenho</h2>
+              
+              <table className="w-full border-collapse mb-6">
+                <thead>
+                  <tr className="bg-gray-700 text-white">
+                    <th className="border border-gray-300 p-2 text-left">Indicador</th>
+                    <th className="border border-gray-300 p-2 text-left">Ruim (-10%)</th>
+                    <th className="border border-gray-300 p-2 text-left">Ótimo (Esperado)</th>
+                    <th className="border border-gray-300 p-2 text-left">Perfeito (+10%)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-gray-50">
+                    <td className="border p-2">Valor Total do Investimento</td>
+                    <td className="border p-2" colSpan="3">{formatarMoeda(resultados.investimentoBruto)}</td>
+                  </tr>
+                  <tr className="bg-green-50 font-bold">
+                    <td className="border p-2">Resultado Líquido Total</td>
+                    <td className={`border p-2 ${resultados.cenarios.ruim.resultadoLiquido < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatarMoeda(resultados.cenarios.ruim.resultadoLiquido)}
+                    </td>
+                    <td className={`border p-2 ${resultados.cenarios.otimo.resultadoLiquido < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatarMoeda(resultados.cenarios.otimo.resultadoLiquido)}
+                    </td>
+                    <td className={`border p-2 ${resultados.cenarios.perfeito.resultadoLiquido < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatarMoeda(resultados.cenarios.perfeito.resultadoLiquido)}
+                    </td>
+                  </tr>
+                  <tr className="bg-gray-50">
+                    <td className="border p-2">Resultado Líquido Mensal*</td>
+                    <td className={`border p-2 ${resultados.cenarios.ruim.resultadoLiquidoMensal < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatarMoeda(resultados.cenarios.ruim.resultadoLiquidoMensal)}
+                    </td>
+                    <td className={`border p-2 ${resultados.cenarios.otimo.resultadoLiquidoMensal < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatarMoeda(resultados.cenarios.otimo.resultadoLiquidoMensal)}
+                    </td>
+                    <td className={`border p-2 ${resultados.cenarios.perfeito.resultadoLiquidoMensal < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatarMoeda(resultados.cenarios.perfeito.resultadoLiquidoMensal)}
+                    </td>
+                  </tr>
+                  <tr className="bg-blue-50 font-bold">
+                    <td className="border p-2">Cap Rate Anual</td>
+                    <td className={`border p-2 ${resultados.cenarios.ruim.capRateAnual < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatarPorcentagem(resultados.cenarios.ruim.capRateAnual)}
+                    </td>
+                    <td className={`border p-2 ${resultados.cenarios.otimo.capRateAnual < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatarPorcentagem(resultados.cenarios.otimo.capRateAnual)}
+                    </td>
+                    <td className={`border p-2 ${resultados.cenarios.perfeito.capRateAnual < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatarPorcentagem(resultados.cenarios.perfeito.capRateAnual)}
+                    </td>
+                  </tr>
+                  <tr className="bg-gray-50">
+                    <td className="border p-2">Cap Rate Mensal</td>
+                    <td className={`border p-2 ${resultados.cenarios.ruim.capRateMensal < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatarPorcentagem(resultados.cenarios.ruim.capRateMensal)}
+                    </td>
+                    <td className={`border p-2 ${resultados.cenarios.otimo.capRateMensal < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatarPorcentagem(resultados.cenarios.otimo.capRateMensal)}
+                    </td>
+                    <td className={`border p-2 ${resultados.cenarios.perfeito.capRateMensal < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatarPorcentagem(resultados.cenarios.perfeito.capRateMensal)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border p-2 text-sm italic" colSpan="4">* Considerando distribuição igual em 12 meses</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <button 
+                onClick={() => setAbaAtiva('entrada')} 
+                className="w-full p-3 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Voltar e Editar Dados
+              </button>
+            </div>
+          ) : (
+            <div className="text-center p-6">
+              <p>Por favor, calcule primeiro a viabilidade na aba "Entrada de Dados".</p>
+              <button 
+                onClick={() => setAbaAtiva('entrada')} 
+                className="mt-4 p-3 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Ir para Entrada de Dados
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div>
+          {resultados ? (
+            <div>
+              <h2 className="text-lg font-bold text-white bg-gray-700 p-2 mb-4">Comparativo com Renda Fixa</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label className="block mb-1">Taxa de Juros da Renda Fixa (% ao ano):</label>
+                  <input 
+                    type="text" 
+                    value={taxaRendaFixa.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} 
+                    onChange={(e) => {
+                      const valor = converterParaNumero(e.target.value);
+                      setTaxaRendaFixa(valor);
+                    }}
+                    onFocus={(e) => {
+                      e.target.value = e.target.value.replace(/\./g, '');
+                    }}
+                    onBlur={(e) => {
+                      const valor = converterParaNumero(e.target.value);
+                      e.target.value = valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    }}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block mb-1">Cenário para Comparação:</label>
+                  <select 
+                    value={cenarioComparacao} 
+                    onChange={(e) => setCenarioComparacao(e.target.value)} 
+                    className="w-full p-2 border rounded"
+                  >
+                    <option value="ruim">Cenário Ruim (-10%)</option>
+                    <option value="otimo">Cenário Ótimo (Esperado)</option>
+                    <option value="perfeito">Cenário Perfeito (+10%)</option>
+                  </select>
+                </div>
+              </div>
+              
+              {/* Resultados da Comparação */}
+              <div>
+                {(() => {
+                  // Calcular valores para comparação
+                  const investimentoTotal = resultados.investimentoBruto;
+                  const resultadoCenario = resultados.cenarios[cenarioComparacao];
+                  const rendimentoRF = investimentoTotal * (taxaRendaFixa / 100);
+                  const diferencaValor = resultadoCenario.resultadoLiquido - rendimentoRF;
+                  const diferencaPercent = resultadoCenario.capRateAnual - taxaRendaFixa;
+                  
+                  const isImobMelhor = diferencaPercent > 0;
+                  const mensagemClasse = isImobMelhor ? 'bg-green-50 border-l-4 border-green-500 p-4 mb-6' : 'bg-red-50 border-l-4 border-red-500 p-4 mb-6';
+                  
+                  // Preparar dados para o gráfico
+                  const dataImob = [
+                    { nome: 'Ano 1', valor: resultadoCenario.resultadoLiquido },
+                    { nome: 'Ano 2', valor: resultadoCenario.resultadoLiquido * 2 },
+                    { nome: 'Ano 3', valor: resultadoCenario.resultadoLiquido * 3 },
+                    { nome: 'Ano 4', valor: resultadoCenario.resultadoLiquido * 4 },
+                    { nome: 'Ano 5', valor: resultadoCenario.resultadoLiquido * 5 },
+                  ];
+                  
+                  const dataRF = [
+                    { nome: 'Ano 1', valor: rendimentoRF },
+                    { nome: 'Ano 2', valor: rendimentoRF * 2 },
+                    { nome: 'Ano 3', valor: rendimentoRF * 3 },
+                    { nome: 'Ano 4', valor: rendimentoRF * 4 },
+                    { nome: 'Ano 5', valor: rendimentoRF * 5 },
+                  ];
+                  
+                  return (
+                    <>
+                      <div className={mensagemClasse}>
+                        <p className="font-bold text-lg mb-2">Resultado da Comparação:</p>
+                        <p>
+                          {isImobMelhor 
+                            ? `O investimento imobiliário no cenário ${cenarioComparacao.toUpperCase()} apresenta um retorno superior à renda fixa.` 
+                            : `A renda fixa apresenta um retorno superior ao investimento imobiliário no cenário ${cenarioComparacao.toUpperCase()}.`
+                          }
+                        </p>
+                        <p className="mt-2">
+                          Retorno Imobiliário: <span className="font-bold">{formatarPorcentagem(resultadoCenario.capRateAnual)}</span> ao ano
+                        </p>
+                        <p>
+                          Retorno Renda Fixa: <span className="font-bold">{formatarPorcentagem(taxaRendaFixa)}</span> ao ano
+                        </p>
+                        <p className="mt-2">
+                          Diferença: <span className={isImobMelhor ? "text-green-600 font-bold" : "text-red-600 font-bold"}>
+                            {formatarPorcentagem(Math.abs(diferencaPercent))} {isImobMelhor ? "a favor do imobiliário" : "a favor da renda fixa"}
+                          </span>
+                        </p>
+                      </div>
