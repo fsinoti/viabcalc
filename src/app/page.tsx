@@ -1,13 +1,6 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 
-export default function Home() {
-  // Estados para o logo e título personalizáveis
-  const [logo, setLogo] = useState(null);
-  const [titulo, setTitulo] = useState('Calculadora de Viabilidade de Investimento Imobiliário');
-  const [editandoTitulo, setEditandoTitulo] = useState(false);
-  
+const CalculadoraViabilidade = () => {
   // Estado para controlar as abas
   const [abaAtiva, setAbaAtiva] = useState('entrada');
   
@@ -68,35 +61,6 @@ export default function Home() {
     });
     setFormattedInput(formattedValues);
   }, []);
-  
-  // Função para lidar com o upload de logo
-  const handleLogoUpload = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type.match('image.*')) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setLogo(event.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  
-  // Função para alternar entre visualizar e editar o título
-  const toggleEditarTitulo = () => {
-    setEditandoTitulo(!editandoTitulo);
-  };
-  
-  // Função para atualizar o título
-  const handleTituloChange = (e) => {
-    setTitulo(e.target.value);
-  };
-  
-  // Função para finalizar a edição do título ao pressionar Enter
-  const handleTituloKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      setEditandoTitulo(false);
-    }
-  };
   
   // Função para formatar números no formato brasileiro
   const formatarNumeroInput = (valor) => {
@@ -266,59 +230,7 @@ export default function Home() {
   
   return (
     <div className="max-w-4xl mx-auto bg-white rounded shadow p-4">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center">
-          <div className="relative group cursor-pointer">
-            {logo ? (
-              <img 
-                src={logo} 
-                alt="Logo" 
-                className="h-16 w-auto max-w-32 mr-4" 
-                onClick={() => document.getElementById('logo-upload').click()}
-              />
-            ) : (
-              <div 
-                className="h-16 w-32 bg-gray-200 flex items-center justify-center mr-4 border border-dashed border-gray-400"
-                onClick={() => document.getElementById('logo-upload').click()}
-              >
-                <span className="text-gray-500 text-xs text-center">Clique para adicionar logo</span>
-              </div>
-            )}
-            <input 
-              id="logo-upload" 
-              type="file" 
-              accept="image/*" 
-              className="hidden" 
-              onChange={handleLogoUpload}
-            />
-            <div className="hidden group-hover:block absolute top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <span className="text-white text-xs">Alterar</span>
-            </div>
-          </div>
-          
-          <div>
-            {editandoTitulo ? (
-              <input
-                type="text"
-                value={titulo}
-                onChange={handleTituloChange}
-                onBlur={() => setEditandoTitulo(false)}
-                onKeyDown={handleTituloKeyDown}
-                className="text-2xl font-bold text-gray-700 border-b border-blue-500 focus:outline-none w-full"
-                autoFocus
-              />
-            ) : (
-              <h1 
-                className="text-2xl font-bold text-gray-700 cursor-pointer" 
-                onClick={toggleEditarTitulo}
-                title="Clique para editar o título"
-              >
-                {titulo}
-              </h1>
-            )}
-          </div>
-        </div>
-      </div>
+      <h1 className="text-2xl font-bold text-gray-700 text-center mb-4">Calculadora de Viabilidade de Investimento Imobiliário</h1>
       
       {/* Abas de navegação */}
       <div className="flex mb-6">
@@ -342,8 +254,7 @@ export default function Home() {
         </button>
       </div>
       
-      {/* Conteúdo da aba entrada */}
-      {abaAtiva === 'entrada' && (
+      {abaAtiva === 'entrada' ? (
         <div>
           {/* Dados do Investimento */}
           <div className="mb-6">
@@ -627,10 +538,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-      )}
-      
-      {/* Conteúdo da aba resultados */}
-      {abaAtiva === 'resultados' && (
+      ) : abaAtiva === 'resultados' ? (
         <div>
           {resultados ? (
             <div>
@@ -638,102 +546,81 @@ export default function Home() {
               
               <table className="w-full border-collapse mb-6">
                 <thead>
-                  <tr className="bg-gray-700 text-white">
-                    <th className="border border-gray-300 p-2 text-left">Item</th>
-                    <th className="border border-gray-300 p-2 text-left">Ruim (-10%)</th>
-                    <th className="border border-gray-300 p-2 text-left">Ótimo (Esperado)</th>
-                    <th className="border border-gray-300 p-2 text-left">Perfeito (+10%)</th>
+                  <tr className="bg-gray-100">
+                    <th className="border p-2 text-left">Item</th>
+                    <th className="border p-2 text-left">Ruim (-10%)</th>
+                    <th className="border p-2 text-left">Ótimo (Esperado)</th>
+                    <th className="border p-2 text-left">Perfeito (+10%)</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Seção de Custos */}
-                  <tr className="bg-blue-50">
-                    <td colSpan="4" className="border p-2 font-bold bg-blue-100">Custos de Aquisição e Construção</td>
-                  </tr>
-                  <tr className="bg-blue-50">
+                  <tr>
                     <td className="border p-2">Valor do Terreno</td>
                     <td className="border p-2" colSpan="3">{formatarMoeda(formData.valorTerreno)}</td>
                   </tr>
-                  <tr className="bg-blue-50">
+                  <tr>
                     <td className="border p-2">Custo de Construção Base</td>
                     <td className="border p-2" colSpan="3">{formatarMoeda(resultados.custoConstrucao)}</td>
                   </tr>
-                  <tr className="bg-blue-50">
+                  <tr>
                     <td className="border p-2">Administração da Obra ({formData.adminObra}%)</td>
                     <td className="border p-2" colSpan="3">{formatarMoeda(resultados.custoAdminObra)}</td>
                   </tr>
-                  <tr className="bg-blue-50">
+                  <tr>
                     <td className="border p-2">Custo Total de Construção</td>
                     <td className="border p-2" colSpan="3">{formatarMoeda(resultados.custoTotalConstrucao)}</td>
                   </tr>
-                  <tr className="bg-blue-50">
-                    <td className="border p-2 font-bold">Investimento Bruto</td>
-                    <td className="border p-2 font-bold" colSpan="3">{formatarMoeda(resultados.investimentoBruto)}</td>
+                  <tr>
+                    <td className="border p-2">Investimento Bruto</td>
+                    <td className="border p-2" colSpan="3">{formatarMoeda(resultados.investimentoBruto)}</td>
                   </tr>
-                  
-                  {/* Seção de Receitas */}
-                  <tr className="bg-green-50">
-                    <td colSpan="4" className="border p-2 font-bold bg-green-100">Receitas e Vendas</td>
-                  </tr>
-                  <tr className="bg-green-50">
+                  <tr>
                     <td className="border p-2">Valor Final de Venda</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.ruim.valorVenda)}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.otimo.valorVenda)}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.perfeito.valorVenda)}</td>
                   </tr>
-                  
-                  {/* Seção de Custos Adicionais */}
-                  <tr className="bg-red-50">
-                    <td colSpan="4" className="border p-2 font-bold bg-red-100">Custos Adicionais</td>
-                  </tr>
-                  <tr className="bg-red-50">
+                  <tr>
                     <td className="border p-2">ITBI ({formData.itbi}%)</td>
                     <td className="border p-2" colSpan="3">{formatarMoeda(resultados.custoItbi)}</td>
                   </tr>
-                  <tr className="bg-red-50">
+                  <tr>
                     <td className="border p-2">Escritura/RGI ({formData.escritura}%)</td>
                     <td className="border p-2" colSpan="3">{formatarMoeda(resultados.custoEscritura)}</td>
                   </tr>
-                  <tr className="bg-red-50">
+                  <tr>
                     <td className="border p-2">Certidões, Cópias e Autenticações</td>
                     <td className="border p-2" colSpan="3">{formatarMoeda(formData.certidoes)}</td>
                   </tr>
-                  
-                  {/* Seção de Resultados */}
-                  <tr className="bg-yellow-50">
-                    <td colSpan="4" className="border p-2 font-bold bg-yellow-100">Análise de Lucros</td>
-                  </tr>
-                  <tr className="bg-yellow-50">
+                  <tr>
                     <td className="border p-2">Lucro Bruto</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.ruim.lucroBruto)}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.otimo.lucroBruto)}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.perfeito.lucroBruto)}</td>
                   </tr>
-                  <tr className="bg-yellow-50">
+                  <tr>
                     <td className="border p-2">Imposto de Renda ({formData.tipoImposto === 'PF' ? '15%' : '6%'})</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.ruim.impostoRenda)}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.otimo.impostoRenda)}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.perfeito.impostoRenda)}</td>
                   </tr>
-                  <tr className="bg-yellow-50">
+                  <tr>
                     <td className="border p-2">{formData.tipoCorretagem === 'corretor' ? 'Corretagem (5%)' : 'Propaganda Própria (1%)'}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.ruim.custoCorretagem)}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.otimo.custoCorretagem)}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.perfeito.custoCorretagem)}</td>
                   </tr>
-                  <tr className="bg-yellow-50">
+                  <tr>
                     <td className="border p-2">A Receber (antes dos custos fora obra)</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.ruim.aReceber)}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.otimo.aReceber)}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.perfeito.aReceber)}</td>
                   </tr>
-                  <tr className="bg-yellow-50">
+                  <tr>
                     <td className="border p-2">Custos Fora Obra</td>
                     <td className="border p-2" colSpan="3">{formatarMoeda(resultados.custoForaObra)}</td>
                   </tr>
-                  
-                  {/* Linha de Resultado Final */}
-                  <tr className="bg-purple-100 font-bold text-lg">
+                  <tr className="bg-blue-50 font-bold">
                     <td className="border p-2">Resultado Líquido</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.ruim.resultadoLiquido)}</td>
                     <td className="border p-2">{formatarMoeda(resultados.cenarios.otimo.resultadoLiquido)}</td>
@@ -746,68 +633,305 @@ export default function Home() {
               
               <table className="w-full border-collapse mb-6">
                 <thead>
-                  <tr className="bg-gray-700 text-white">
-                    <th className="border border-gray-300 p-2 text-left">Indicador</th>
-                    <th className="border border-gray-300 p-2 text-left">Ruim (-10%)</th>
-                    <th className="border border-gray-300 p-2 text-left">Ótimo (Esperado)</th>
-                    <th className="border border-gray-300 p-2 text-left">Perfeito (+10%)</th>
+                  <tr className="bg-gray-100">
+                    <th className="border p-2 text-left">Indicador</th>
+                    <th className="border p-2 text-left">Ruim (-10%)</th>
+                    <th className="border p-2 text-left">Ótimo (Esperado)</th>
+                    <th className="border p-2 text-left">Perfeito (+10%)</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="bg-gray-50">
+                  <tr>
                     <td className="border p-2">Valor Total do Investimento</td>
                     <td className="border p-2" colSpan="3">{formatarMoeda(resultados.investimentoBruto)}</td>
                   </tr>
-                  <tr className="bg-green-50 font-bold">
+                  <tr className="bg-blue-50 font-bold">
                     <td className="border p-2">Resultado Líquido Total</td>
-                    <td className={`border p-2 ${resultados.cenarios.ruim.resultadoLiquido < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {formatarMoeda(resultados.cenarios.ruim.resultadoLiquido)}
-                    </td>
-                    <td className={`border p-2 ${resultados.cenarios.otimo.resultadoLiquido < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {formatarMoeda(resultados.cenarios.otimo.resultadoLiquido)}
-                    </td>
-                    <td className={`border p-2 ${resultados.cenarios.perfeito.resultadoLiquido < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {formatarMoeda(resultados.cenarios.perfeito.resultadoLiquido)}
-                    </td>
+                    <td className="border p-2">{formatarMoeda(resultados.cenarios.ruim.resultadoLiquido)}</td>
+                    <td className="border p-2">{formatarMoeda(resultados.cenarios.otimo.resultadoLiquido)}</td>
+                    <td className="border p-2">{formatarMoeda(resultados.cenarios.perfeito.resultadoLiquido)}</td>
                   </tr>
-                  <tr className="bg-gray-50">
+                  <tr>
                     <td className="border p-2">Resultado Líquido Mensal*</td>
-                    <td className={`border p-2 ${resultados.cenarios.ruim.resultadoLiquidoMensal < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {formatarMoeda(resultados.cenarios.ruim.resultadoLiquidoMensal)}
-                    </td>
-                    <td className={`border p-2 ${resultados.cenarios.otimo.resultadoLiquidoMensal < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {formatarMoeda(resultados.cenarios.otimo.resultadoLiquidoMensal)}
-                    </td>
-                    <td className={`border p-2 ${resultados.cenarios.perfeito.resultadoLiquidoMensal < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {formatarMoeda(resultados.cenarios.perfeito.resultadoLiquidoMensal)}
-                    </td>
+                    <td className="border p-2">{formatarMoeda(resultados.cenarios.ruim.resultadoLiquidoMensal)}</td>
+                    <td className="border p-2">{formatarMoeda(resultados.cenarios.otimo.resultadoLiquidoMensal)}</td>
+                    <td className="border p-2">{formatarMoeda(resultados.cenarios.perfeito.resultadoLiquidoMensal)}</td>
                   </tr>
                   <tr className="bg-blue-50 font-bold">
                     <td className="border p-2">Cap Rate Anual</td>
-                    <td className={`border p-2 ${resultados.cenarios.ruim.capRateAnual < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {formatarPorcentagem(resultados.cenarios.ruim.capRateAnual)}
-                    </td>
-                    <td className={`border p-2 ${resultados.cenarios.otimo.capRateAnual < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {formatarPorcentagem(resultados.cenarios.otimo.capRateAnual)}
-                    </td>
-                    <td className={`border p-2 ${resultados.cenarios.perfeito.capRateAnual < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {formatarPorcentagem(resultados.cenarios.perfeito.capRateAnual)}
-                    </td>
+                    <td className="border p-2">{formatarPorcentagem(resultados.cenarios.ruim.capRateAnual)}</td>
+                    <td className="border p-2">{formatarPorcentagem(resultados.cenarios.otimo.capRateAnual)}</td>
+                    <td className="border p-2">{formatarPorcentagem(resultados.cenarios.perfeito.capRateAnual)}</td>
                   </tr>
-                  <tr className="bg-gray-50">
+                  <tr>
                     <td className="border p-2">Cap Rate Mensal</td>
-                    <td className={`border p-2 ${resultados.cenarios.ruim.capRateMensal < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {formatarPorcentagem(resultados.cenarios.ruim.capRateMensal)}
-                    </td>
-                    <td className={`border p-2 ${resultados.cenarios.otimo.capRateMensal < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {formatarPorcentagem(resultados.cenarios.otimo.capRateMensal)}
-                    </td>
-                    <td className={`border p-2 ${resultados.cenarios.perfeito.capRateMensal < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {formatarPorcentagem(resultados.cenarios.perfeito.capRateMensal)}
-                    </td>
+                    <td className="border p-2">{formatarPorcentagem(resultados.cenarios.ruim.capRateMensal)}</td>
+                    <td className="border p-2">{formatarPorcentagem(resultados.cenarios.otimo.capRateMensal)}</td>
+                    <td className="border p-2">{formatarPorcentagem(resultados.cenarios.perfeito.capRateMensal)}</td>
                   </tr>
                   <tr>
                     <td className="border p-2 text-sm italic" colSpan="4">* Considerando distribuição igual em 12 meses</td>
                   </tr>
                 </tbody>
               </table>
+              
+              <button 
+                onClick={() => setAbaAtiva('entrada')} 
+                className="w-full p-3 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Voltar e Editar Dados
+              </button>
+            </div>
+          ) : (
+            <div className="text-center p-6">
+              <p>Por favor, calcule primeiro a viabilidade na aba "Entrada de Dados".</p>
+              <button 
+                onClick={() => setAbaAtiva('entrada')} 
+                className="mt-4 p-3 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Ir para Entrada de Dados
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div>
+          {resultados ? (
+            <div>
+              <h2 className="text-lg font-bold text-white bg-gray-700 p-2 mb-4">Comparativo com Renda Fixa</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label className="block mb-1">Taxa de Juros da Renda Fixa (% ao ano):</label>
+                  <input 
+                    type="number" 
+                    value={taxaRendaFixa} 
+                    onChange={(e) => setTaxaRendaFixa(parseFloat(e.target.value) || 0)} 
+                    className="w-full p-2 border rounded"
+                    step="0.1"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block mb-1">Cenário para Comparação:</label>
+                  <select 
+                    value={cenarioComparacao} 
+                    onChange={(e) => setCenarioComparacao(e.target.value)} 
+                    className="w-full p-2 border rounded"
+                  >
+                    <option value="ruim">Cenário Ruim (-10%)</option>
+                    <option value="otimo">Cenário Ótimo (Esperado)</option>
+                    <option value="perfeito">Cenário Perfeito (+10%)</option>
+                  </select>
+                </div>
+              </div>
+              
+              {/* Resultados da Comparação */}
+              <div>
+                {(() => {
+                  // Calcular valores para comparação
+                  const investimentoTotal = resultados.investimentoBruto;
+                  const resultadoCenario = resultados.cenarios[cenarioComparacao];
+                  const rendimentoRF = investimentoTotal * (taxaRendaFixa / 100);
+                  const diferencaValor = resultadoCenario.resultadoLiquido - rendimentoRF;
+                  const diferencaPercent = resultadoCenario.capRateAnual - taxaRendaFixa;
+                  
+                  const isImobMelhor = diferencaPercent > 0;
+                  const mensagemClasse = isImobMelhor ? 'bg-green-50 border-l-4 border-green-500 p-4 mb-6' : 'bg-red-50 border-l-4 border-red-500 p-4 mb-6';
+                  
+                  // Preparar dados para o gráfico
+                  const dataImob = [
+                    { nome: 'Ano 1', valor: resultadoCenario.resultadoLiquido },
+                    { nome: 'Ano 2', valor: resultadoCenario.resultadoLiquido * 2 },
+                    { nome: 'Ano 3', valor: resultadoCenario.resultadoLiquido * 3 },
+                    { nome: 'Ano 4', valor: resultadoCenario.resultadoLiquido * 4 },
+                    { nome: 'Ano 5', valor: resultadoCenario.resultadoLiquido * 5 },
+                  ];
+                  
+                  const dataRF = [
+                    { nome: 'Ano 1', valor: rendimentoRF },
+                    { nome: 'Ano 2', valor: rendimentoRF * 2 },
+                    { nome: 'Ano 3', valor: rendimentoRF * 3 },
+                    { nome: 'Ano 4', valor: rendimentoRF * 4 },
+                    { nome: 'Ano 5', valor: rendimentoRF * 5 },
+                  ];
+                  
+                  return (
+                    <>
+                      <div className={mensagemClasse}>
+                        <p className="font-bold text-lg mb-2">Resultado da Comparação:</p>
+                        <p>
+                          {isImobMelhor 
+                            ? `O investimento imobiliário no cenário ${cenarioComparacao.toUpperCase()} apresenta um retorno superior à renda fixa.` 
+                            : `A renda fixa apresenta um retorno superior ao investimento imobiliário no cenário ${cenarioComparacao.toUpperCase()}.`
+                          }
+                        </p>
+                        <p className="mt-2">
+                          Retorno Imobiliário: <span className="font-bold">{formatarPorcentagem(resultadoCenario.capRateAnual)}</span> ao ano
+                        </p>
+                        <p>
+                          Retorno Renda Fixa: <span className="font-bold">{formatarPorcentagem(taxaRendaFixa)}</span> ao ano
+                        </p>
+                        <p className="mt-2">
+                          Diferença: <span className={isImobMelhor ? "text-green-600 font-bold" : "text-red-600 font-bold"}>
+                            {formatarPorcentagem(Math.abs(diferencaPercent))} {isImobMelhor ? "a favor do imobiliário" : "a favor da renda fixa"}
+                          </span>
+                        </p>
+                      </div>
+                      
+                      <div className="p-4 bg-white rounded shadow mb-6">
+                        <p className="text-center font-bold mb-4">Gráfico de Retorno Acumulado (5 anos)</p>
+                        <div className="h-64 w-full flex items-center justify-center">
+                          <svg className="w-full h-full">
+                            {/* Eixos */}
+                            <line x1="50" y1="210" x2="550" y2="210" stroke="black" strokeWidth="2" />
+                            <line x1="50" y1="210" x2="50" y2="30" stroke="black" strokeWidth="2" />
+                            
+                            {/* Textos dos anos */}
+                            {dataImob.map((item, index) => (
+                              <text
+                                key={`ano-${index}`}
+                                x={50 + ((index + 1) * 100)}
+                                y="230"
+                                textAnchor="middle"
+                                fontSize="12"
+                              >
+                                {item.nome}
+                              </text>
+                            ))}
+                            
+                            {/* Linhas e pontos para investimento imobiliário */}
+                            <polyline
+                              points={`50,210 ${dataImob.map((item, index) => `${50 + ((index + 1) * 100)},${210 - (item.valor / (Math.max(...dataImob.map(d => d.valor), ...dataRF.map(d => d.valor)) / 150))}`).join(' ')}`}
+                              fill="none"
+                              stroke="#3B82F6"
+                              strokeWidth="2"
+                            />
+                            {dataImob.map((item, index) => (
+                              <circle
+                                key={`imob-${index}`}
+                                cx={50 + ((index + 1) * 100)}
+                                cy={210 - (item.valor / (Math.max(...dataImob.map(d => d.valor), ...dataRF.map(d => d.valor)) / 150))}
+                                r="4"
+                                fill="#3B82F6"
+                              />
+                            ))}
+                            
+                            {/* Linhas e pontos para renda fixa */}
+                            <polyline
+                              points={`50,210 ${dataRF.map((item, index) => `${50 + ((index + 1) * 100)},${210 - (item.valor / (Math.max(...dataImob.map(d => d.valor), ...dataRF.map(d => d.valor)) / 150))}`).join(' ')}`}
+                              fill="none"
+                              stroke="#EF4444"
+                              strokeWidth="2"
+                            />
+                            {dataRF.map((item, index) => (
+                              <circle
+                                key={`rf-${index}`}
+                                cx={50 + ((index + 1) * 100)}
+                                cy={210 - (item.valor / (Math.max(...dataImob.map(d => d.valor), ...dataRF.map(d => d.valor)) / 150))}
+                                r="4"
+                                fill="#EF4444"
+                              />
+                            ))}
+                            
+                            {/* Legenda */}
+                            <rect x="400" y="30" width="12" height="12" fill="#3B82F6" />
+                            <text x="420" y="40" fontSize="12">Imobiliário</text>
+                            <rect x="400" y="50" width="12" height="12" fill="#EF4444" />
+                            <text x="420" y="60" fontSize="12">Renda Fixa</text>
+                          </svg>
+                        </div>
+                      </div>
+                      
+                      <table className="w-full border-collapse mb-6">
+                        <thead>
+                          <tr className="bg-gray-100">
+                            <th className="border p-2 text-left">Indicador</th>
+                            <th className="border p-2 text-left">Investimento Imobiliário</th>
+                            <th className="border p-2 text-left">Renda Fixa</th>
+                            <th className="border p-2 text-left">Diferença</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td className="border p-2">Investimento Inicial</td>
+                            <td className="border p-2">{formatarMoeda(investimentoTotal)}</td>
+                            <td className="border p-2">{formatarMoeda(investimentoTotal)}</td>
+                            <td className="border p-2">-</td>
+                          </tr>
+                          <tr>
+                            <td className="border p-2">Retorno Anual</td>
+                            <td className="border p-2">{formatarMoeda(resultadoCenario.resultadoLiquido)}</td>
+                            <td className="border p-2">{formatarMoeda(rendimentoRF)}</td>
+                            <td className={`border p-2 ${isImobMelhor ? "text-green-600 font-bold" : "text-red-600 font-bold"}`}>
+                              {formatarMoeda(Math.abs(diferencaValor))} {isImobMelhor ? "a favor do imobiliário" : "a favor da renda fixa"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="border p-2">Retorno Mensal</td>
+                            <td className="border p-2">{formatarMoeda(resultadoCenario.resultadoLiquidoMensal)}</td>
+                            <td className="border p-2">{formatarMoeda(rendimentoRF / 12)}</td>
+                            <td className={`border p-2 ${isImobMelhor ? "text-green-600 font-bold" : "text-red-600 font-bold"}`}>
+                              {formatarMoeda(Math.abs(resultadoCenario.resultadoLiquidoMensal - (rendimentoRF / 12)))}
+                            </td>
+                          </tr>
+                          <tr className="bg-blue-50 font-bold">
+                            <td className="border p-2">Taxa de Retorno Anual</td>
+                            <td className="border p-2">{formatarPorcentagem(resultadoCenario.capRateAnual)}</td>
+                            <td className="border p-2">{formatarPorcentagem(taxaRendaFixa)}</td>
+                            <td className={`border p-2 ${isImobMelhor ? "text-green-600" : "text-red-600"}`}>
+                              {formatarPorcentagem(Math.abs(diferencaPercent))}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="border p-2">Liquidez</td>
+                            <td className="border p-2">Baixa</td>
+                            <td className="border p-2">Alta</td>
+                            <td className="border p-2">Vantagem para Renda Fixa</td>
+                          </tr>
+                          <tr>
+                            <td className="border p-2">Risco</td>
+                            <td className="border p-2">Médio/Alto</td>
+                            <td className="border p-2">Baixo</td>
+                            <td className="border p-2">Vantagem para Renda Fixa</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </>
+                  );
+                })()}
+              </div>
+              
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setAbaAtiva('resultados')} 
+                  className="flex-1 p-3 bg-gray-500 text-white rounded hover:bg-gray-600"
+                >
+                  Voltar para Resultados
+                </button>
+                <button 
+                  onClick={() => setAbaAtiva('entrada')} 
+                  className="flex-1 p-3 bg-gray-500 text-white rounded hover:bg-gray-600"
+                >
+                  Editar Dados
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center p-6">
+              <p>Por favor, calcule primeiro a viabilidade na aba "Entrada de Dados".</p>
+              <button 
+                onClick={() => setAbaAtiva('entrada')} 
+                className="mt-4 p-3 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Ir para Entrada de Dados
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default CalculadoraViabilidade;
